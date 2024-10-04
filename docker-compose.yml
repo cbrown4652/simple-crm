@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./frontend:/app
+    command: npm run dev
+    depends_on:
+      - backend
+  db:
+    image: postgres:latest  # Use the latest PostgreSQL image
+    restart: always
+    ports:
+      - "5432:5432"  # Expose PostgreSQL on port 5432
+    environment:
+      POSTGRES_DB: simplecrm  # Database name
+      POSTGRES_USER: postgres  # Username
+      POSTGRES_PASSWORD: yourpassword  # Password for the PostgreSQL user
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persist data
+  volumes:
+    postgres_data:  # Named volume for PostgreSQL data persistence
